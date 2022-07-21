@@ -83,6 +83,8 @@ const (
 	nfUlaAttrCtInfo
 )
 
+const attrTypeMask uint16 = 0x3fff
+
 // Attribute contains various elements for nflog elements.
 // As not every value is contained in every nflog message,
 // the elements inside Attribute are pointers to these values
