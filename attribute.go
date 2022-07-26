@@ -1,7 +1,6 @@
 package nflog
 
 import (
-	"bytes"
 	"encoding/binary"
 	"log"
 	"time"
@@ -27,16 +26,9 @@ func extractAttribute(a *Attribute, logger *log.Logger, data []byte) error {
 			a.Mark = ad.Uint32()
 			ad.ByteOrder = nativeEndian
 		case nfUlaAttrTimestamp:
-			var sec, usec int64
-			r := bytes.NewReader(ad.Bytes()[:8])
-			if err := binary.Read(r, binary.BigEndian, &sec); err != nil {
-				return err
-			}
-			r = bytes.NewReader(ad.Bytes()[8:])
-			if err := binary.Read(r, binary.BigEndian, &usec); err != nil {
-				return err
-			}
-			a.Timestamp = time.Unix(sec, usec*1000)
+			sec := binary.BigEndian.Uint64(ad.Bytes()[:8])
+			usec := binary.BigEndian.Uint64(ad.Bytes()[8:])
+			a.Timestamp = time.Unix(int64(sec), int64(usec)*1000)
 		case nfUlaAttrIfindexIndev:
 			ad.ByteOrder = binary.BigEndian
 			a.InDev = ad.Uint32()
